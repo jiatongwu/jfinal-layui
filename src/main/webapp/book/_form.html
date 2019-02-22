@@ -1,0 +1,13 @@
+<fieldset class="solid">
+	<legend>创建book</legend>
+	<input type="hidden" name="book.id" value="#(book.id??)" />
+	<div>
+		<label>书名</label>
+		<input type="text" name="book.name" value="#(book.name??)" />#(nameMsg)
+	</div>
+	
+	<div>
+		<label>&nbsp;</label>
+		<input value="提交" type="submit">
+	</div>
+</fieldset>

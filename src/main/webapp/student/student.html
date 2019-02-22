@@ -1,0 +1,421 @@
+#@main() #define body()
+
+<div id="studentDiv">
+	<div style="display: none;" id="editPage">
+		<div>
+			<form class="layui-form" action="#">
+
+				<input type="text" name="addOrEditId" id="addOrEditId"
+					hidden="hidden" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">姓名</label>
+					<div class="layui-input-inline">
+						<input type="text" id="studentName" name="name" lay-verify="title"
+							autocomplete="off" placeholder="请输入标题" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">身份证号</label>
+					<div class="layui-input-inline">
+						<input type="text" id="studentIdcard" name="idcard"
+							lay-verify="required" placeholder="请输入" autocomplete="off"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">学校</label>
+					<div class="layui-input-inline">
+						<input type="text" id="studentSchool" name="school"
+							lay-verify="required" placeholder="请输入" autocomplete="off"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">报名号</label>
+					<div class="layui-input-inline">
+						<input type="text" id="studentBaominghao" name="baominghao"
+							placeholder="请输入" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">准考证号</label>
+					<div class="layui-input-inline">
+						<input type="text" id="studentZhunkaozhenghao"
+							name="zhunkaozhenghao" placeholder="请输入" autocomplete="off"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">性别</label>
+					<div class="layui-input-inline">
+						<input type="radio" id="studentGendarMan" name="gendar" value="男"
+							title="男" checked=""> <input id="studentGendarWomen"
+							type="radio" name="gendar" value="女" title="女">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">考生类型</label>
+					<div class="layui-input-block">
+						<input type="radio" id="studentTypeNormal" name="type"
+							value="普通考生" title="普通考生" checked=""> <input
+							id="studentTypeSpec" type="radio" name="type" value="特长生"
+							title="特长生">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/html" id="toolbarDemo">
+ 	 <div class="layui-btn-container">
+	<button class="layui-btn layui-btn-sm" lay-event="addStudent" >新增</button>
+    
+ 	 </div>
+	</script>
+
+	<!-- <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button> -->
+	<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+	</script>
+
+
+
+	<fieldset class="layui-elem-field">
+		<legend>搜索</legend>
+		<div class="layui-field-box">
+			<div class="layui-form" action="/test">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">学校名称</label>
+						<div class="layui-input-inline">
+							<!-- lay-verify="required|phone" -->
+							<input id="schoolInput" type="tel" name="school"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">姓名</label>
+						<div class="layui-input-inline">
+							<input id="nameInput" type="text" name="name" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button @click="search" class="layui-btn">搜索</button>
+						<button @click="resetForm" type="reset"
+							class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+
+	<!-- 数据表格开始 -->
+	<table class="layui-hide" id="test" lay-filter="test"></table>
+	<!-- 数据表格结束 -->
+</div>
+
+
+
+<script>
+	var table ; 
+	
+	function tableReload(){
+		table.reload('test',{ method:'post',
+	        where:{
+				name : $("#nameInput").val(),
+				school : $("#schoolInput").val()
+			} });		
+	}
+	
+	layui.use(['table','layer','form', 'layedit', 'laydate'], function() {
+		 var form = layui.form
+		  ,layedit = layui.layedit
+		  ,laydate = layui.laydate;
+		table = layui.table;
+		layer=layui.layer;
+		table.render({
+			elem : '#test',
+			url : '/student/studentJson',
+			where : {
+				name : $("#nameInput").val(),
+				school : $("#schoolInput").val()
+			},
+			method : 'post',
+			toolbar : '#toolbarDemo',
+			defaultToolbar:[],
+			title : '考生数据',
+			cols : [ [ 
+			//	{
+			//	type : 'checkbox',
+			//	fixed : 'left'
+			//}, 
+			{
+				field : 'id',
+				title : 'ID',
+				width : 80,
+				fixed : 'left',
+				unresize : true,
+				sort : true
+			}, {
+				field : 'name',
+				title : '姓名',
+				width : 120,
+				//edit : 'text'
+			}, {
+				field : 'school',
+				title : '学校',
+				width : 180,
+				//edit : 'text'
+			}, {
+				field : 'idcard',
+				title : '身份证号',
+				width : 150,
+				//edit : 'text',
+				//templet : function(res) {
+//					return '<em>' + res.email + '</em>'
+//				}
+			}, {
+				field : 'gendar',
+				title : '性别',
+				width : 80,
+				//edit : 'text'
+			}, {
+				field : 'baominghao',
+				title : '报名号',
+				width : 100
+			}, {
+				field : 'zhunkaozhenghao',
+				title : '准考证号',
+				width : 100
+			}, {
+				field : 'type',
+				title : '考生类别',
+				width : 200,
+				sort : true
+			},{
+				fixed : 'right',
+				title : '操作',
+				toolbar : '#barDemo',
+				width : 150
+			} ] ],
+			page : true
+		});
+
+		//头工具栏事件
+		table.on('toolbar(test)', function(obj) {
+			var checkStatus = table.checkStatus(obj.config.id);
+			switch (obj.event) {
+			case 'getCheckData':
+				var data = checkStatus.data;
+				layer.alert(JSON.stringify(data));
+				break;
+			case 'getCheckLength':
+				var data = checkStatus.data;
+				layer.msg('选中了：' + data.length + ' 个');
+				break;
+			case 'isAll':
+				layer.msg(checkStatus.isAll ? '全选' : '未全选');
+				break;
+			case 'addStudent':
+				console.log("addStudent-layer");
+				 //弹出一个页面层
+				layer.open({
+            type : 1,
+            area : [ '600px', '500px' ],
+            title : '新增',
+            content : $('#editPage'),
+            success:function(layero){
+            	console.log("sdfkjks");
+                var mask = $(".layui-layer-shade");
+                mask.appendTo(layero.parent());
+                //其中：layero是弹层的DOM对象
+           }
+           // content :'<div></div>'
+          // 这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+          });
+				break;
+			}
+			
+			;
+		});
+		
+		//监听提交
+		  form.on('submit(demo1)', function(data){
+			  console.log("demo1 submit");
+		    //layer.alert(JSON.stringify(data.field), {
+		      //title: '最终的提交信息'
+		    //})
+		    console.log(data);
+		    if(data.field.addOrEditId.trim()==''){
+		    	console.log("新增");
+		    	 $.ajax({
+					url:"/student/studentAdd",
+					method:"post",
+					data:data.field,
+					success:function(data){
+						layer.closeAll(); 
+						console.log(data);
+						tableReload();
+					}						
+				});	 
+		    }else{
+		    	console.log("修改");
+		    	 $.ajax({
+					url:"/student/studentEdit",
+					method:"post",
+					data:data.field,
+					success:function(data){
+						layer.closeAll(); 
+						console.log(data);
+						tableReload();
+					}						
+				});	 
+		    }		    
+		    return false;
+		  });
+		
+		//监听行工具事件
+		table.on('tool(test)', function(obj) {
+			console.log("删除时入参",obj);
+			var data = obj.data;
+			//console.log(obj)
+			if (obj.event === 'del') {
+				layer.confirm('真的删除行么', function(index) {
+					console.log(index);
+					console.log(data.id);
+					$.ajax({
+						url:"/student/studentDel",
+						method:"post",
+						data:{id:data.id},
+						success:function(data){
+							if(data=='1'){
+								obj.del();
+								tableReload();
+							}
+						}						
+					});	
+					layer.close(index);
+				});
+			} else if (obj.event === 'edit') {
+				$.ajax({
+					url:"/student/getById",
+					method:"get",
+					data:{id:data.id},
+					success:function(data){
+						var id=data.id;
+						$("#addOrEditId").val(id);
+						$("#studentName").val(data.name);
+						if(data.type=='普通考生'){
+							$("#studentTypeNormal")[0].checked=true;
+							$("#studentTypeSpec")[0].checked=false;
+							$('#studentTypeNormal').attr("checked", true); //注意这里使用的是attr()
+							$('#studentTypeSpec').attr("checked", false); //注意这里使用的是attr()
+						
+						}else{
+							$("#studentTypeNormal")[0].checked=false;
+							$("#studentTypeSpec")[0].checked=true;
+							$('#studentTypeSpec').attr("checked", true); //注意这里使用的是attr()
+							$('#studentTypeNormal').attr("checked", false); //注意这里使用的是attr()
+						
+						}
+						
+						if(data.gendar=='男'){
+							$("#studentGendarMan")[0].checked=true;
+							$("#studentGendarWomen")[0].checked=false;
+							$('#studentGendarMan').attr("checked", true); //注意这里使用的是attr()
+							$('#studentGendarWomen').attr("checked", false); //注意这里使用的是attr()
+							
+						}else{
+							$("#studentGendarWomen")[0].checked=true;
+							$("#studentGendarMan")[0].checked=false;
+							$('#studentGendarWomen').attr("checked", true); //注意这里使用的是attr()
+							$('#studentGendarMan').attr("checked", false); //注意这里使用的是attr()
+						
+						}
+						layui.form.render();
+						$("#studentZhunkaozhenghao").val(data.zhunkaozhenghao);
+						$("#studentIdcard").val(data.idcard);
+						$("#studentBaominghao").val(data.baominghao);
+						$("#studentSchool").val(data.school);
+						layer.open({
+				            type : 1,
+				            area : [ '600px', '500px' ],
+				            title : '修改',
+				            content : $('#editPage'),
+				            success:function(layero){
+				            	console.log("修改弹出层");
+				                var mask = $(".layui-layer-shade");
+				                mask.appendTo(layero.parent());
+				                //其中：layero是弹层的DOM对象
+				           },end:function(){
+				        	   $("#addOrEditId").val("");
+				        	   $("#studentName").val("");
+				        	   $("#studentTypeNormal")[0].checked=true;
+				        	   $("#studentTypeSpec")[0].checked=false;
+				        	   $("#studentGendarMan")[0].checked=true;
+				        	   $("#studentGendarWomen")[0].checked=false;
+				        	   $('#studentGendarMan').attr("checked", true); //注意这里使用的是attr()
+								$('#studentGendarWoman').attr("checked", false); //注意
+								$('#studentTypeNormal').attr("checked", true); //注意这里使用的是attr()
+								$('#studentTypeSpec').attr("checked", false); 
+								layui.form.render();
+								$("#studentZhunkaozhenghao").val("");
+								$("#studentIdcard").val("");
+								$("#studentBaominghao").val("");
+								$("#studentSchool").val("");
+				        	   console.log();
+				           }
+					});
+					}
+				});
+			}
+		});
+	});
+	var vm = new Vue({
+		el : '#studentDiv',
+		data : {
+			msg : 'hello vue',
+			currentpage : '#(currentPage)'
+		},
+		methods:{
+			search(){
+				console.log("search");
+				tableReload();		
+			},
+			resetForm(){
+				console.log("resetForm");
+				$("#nameInput").val("");
+				$("#schoolInput").val("");
+				tableReload();
+			},
+			test(){
+				console.log("test");
+			},
+			studentAddOrEdit(){
+				console.log("studentAddOrEdit");
+			}
+		}
+	});
+</script>
+
+#end #define js()
+
+<script type="text/javascript" src="student.js">
+	
+</script>
+
+#end
+
+
